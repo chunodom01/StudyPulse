@@ -6,7 +6,11 @@ from app.config import settings
 
 client = genai.Client(api_key=settings.gemini_api_key) if settings.gemini_api_key else None
 
-MODEL = "gemini-3.8-flash"
+MODELS = [
+    "gemini-3.5-flash-lite",
+    "gemini-3.1-flash-lite",
+    "gemini-3.8-flash",
+]
 
 
 def basic_tip(sessions: list[dict]) -> str:
@@ -37,17 +41,18 @@ async def generate_tip(sessions: list[dict]) -> str:
     summary = "\n".join(f"- {s['subject']}: {s['minutes']} min" for s in sessions)
     prompt = (
         "You are a friendly study coach. Based on these study sessions, "
-        "give one short, practical tip (max 3 sentences).\n\n" + summary
+        "give one short, practical tip (max 3 sentences). "
+        "These sessions are from the last 7 days.\n\n" + summary
     )
 
-    for attempt in range(3):
+    for model in MODELS:
         try:
-            response = await client.aio.models.generate_content(model=MODEL, contents=prompt)
+            response = await asyncio.wait_for(
+                client.aio.models.generate_content(model=model, contents=prompt),
+                timeout=8,
+            )
             return response.text.strip()
         except Exception as e:
-            print(f"Gemini error (attempt {attempt + 1}):", e)
-            if "503" not in str(e) and "429" not in str(e):
-                break
-            await asyncio.sleep(2 * (attempt + 1))
+            print(f"Gemini error ({model}):", repr(e))
 
     return basic_tip(sessions)

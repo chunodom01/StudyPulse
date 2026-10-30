@@ -19,5 +19,7 @@ async def list_sessions():
     sessions = []
     async for s in db.sessions.find().sort("created_at", -1):
         s["id"] = str(s.pop("_id"))
+        created = s.get("created_at")
+        s["created_at"] = created.isoformat() + "Z" if created else None
         sessions.append(s)
     return sessions
