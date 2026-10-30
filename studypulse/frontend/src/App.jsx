@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { getSessions, createSession } from "./services/api";
+import { getSessions, createSession, getTip } from "./services/api";
 
 function App() {
   const [sessions, setSessions] = useState([]);
   const [subject, setSubject] = useState("");
   const [minutes, setMinutes] = useState("");
+  const [tip, setTip] = useState("");
 
   const load = async () => {
     const res = await getSessions();
@@ -21,6 +22,12 @@ function App() {
     setSubject("");
     setMinutes("");
     load();
+  };
+
+  const handleTip = async () => {
+    setTip("Thinking...");
+    const res = await getTip();
+    setTip(res.data.tip);
   };
 
   return (
@@ -48,9 +55,13 @@ function App() {
         {sessions.map((s) => (
           <li key={s.id}>
             {s.subject} - {s.minutes} min
+            {s.created_at && ` (${new Date(s.created_at).toLocaleDateString()})`}
           </li>
         ))}
       </ul>
+
+      <button onClick={handleTip}>Get study tip</button>
+      {tip && <p>{tip}</p>}
     </div>
   );
 }
