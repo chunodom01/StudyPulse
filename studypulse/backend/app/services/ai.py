@@ -1,7 +1,7 @@
 import asyncio
 
 from google import genai
-
+from google.genai import types
 from app.config import settings
 
 client = genai.Client(api_key=settings.gemini_api_key) if settings.gemini_api_key else None
@@ -11,6 +11,18 @@ MODELS = [
     "gemini-3.1-flash-lite",
     "gemini-3.8-flash",
 ]
+STYLE = {
+    "en": (
+        "Reply in English. Sound like an upbeat friend who is proud of them: "
+        "warm, energetic and casual. Use 1-2 emojis."
+    ),
+    "km": (
+        "Reply in Khmer (ភាសាខ្មែរ) script. Write the way a friendly Cambodian "
+        "older sibling or classmate talks in a chat: casual spoken Khmer, warm and "
+        "energetic, with 1-2 emojis. Do NOT sound formal, like a textbook, or like "
+        "a machine translation. Use short sentences and natural everyday words."
+    ),
+}
 
 
 def basic_tip(sessions: list[dict], lang: str = "en") -> str:
@@ -54,11 +66,13 @@ async def generate_tip(sessions: list[dict], lang: str = "en") -> str:
 
     summary = "\n".join(f"- {s['subject']}: {s['minutes']} min" for s in sessions)
     prompt = (
-        "You are a friendly study coach. Based on these study sessions, "
-        "give one short, practical tip (max 3 sentences). "
-        "These sessions are from the last 7 days. "
-        + language_line
-        + "\n\n"
+      "You are a fun, supportive study buddy, not a robot and not a strict teacher. "
+        "Below are the student's study sessions from the last 7 days. "
+        "First, cheer them on for something specific they did (mention a subject "
+        "and the minutes). Then give one small, practical tip. "
+        "Maximum 3 sentences. No bullet points, no headings, no greeting like 'Dear user'.\n\n"
+        + STYLE.get(lang, STYLE["en"])
+        + "\n\nSessions:\n"
         + summary
     )
 
