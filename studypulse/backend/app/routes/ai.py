@@ -9,7 +9,7 @@ router = APIRouter(prefix="/ai", tags=["ai"])
 
 
 @router.get("/tip")
-async def study_tip():
+async def study_tip(lang: str = "en"):
     since = datetime.now(timezone.utc) - timedelta(days=7)
     sessions = [s async for s in db.sessions.find({"created_at": {"$gte": since}})]
-    return {"tip": await generate_tip(sessions)}
+    return {"tip": await generate_tip(sessions, lang)}

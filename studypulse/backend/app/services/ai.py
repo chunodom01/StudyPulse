@@ -13,8 +13,10 @@ MODELS = [
 ]
 
 
-def basic_tip(sessions: list[dict]) -> str:
+def basic_tip(sessions: list[dict], lang: str = "en") -> str:
     if not sessions:
+        if lang == "km":
+            return "មិនទាន់មានវគ្គសិក្សានៅឡើយទេ។ សូមបន្ថែមវគ្គសិក្សាដំបូងរបស់អ្នក។"
         return "No sessions yet. Add your first study session to get a tip."
 
     total = sum(s["minutes"] for s in sessions)
@@ -26,23 +28,38 @@ def basic_tip(sessions: list[dict]) -> str:
     top = max(by_subject, key=by_subject.get)
     least = min(by_subject, key=by_subject.get)
 
+    if lang == "km":
+        tip = f"អ្នកបានសិក្សាសរុប {total} នាទី។ មុខវិជ្ជាដែលសិក្សាច្រើនបំផុត៖ {top} ({by_subject[top]} នាទី)។"
+        if top != least:
+            tip += f" សូមសាកល្បងចំណាយពេលបន្ថែមលើ {least} ({by_subject[least]} នាទីប៉ុណ្ណោះ)។"
+        return tip
+
     tip = f"You studied {total} minutes in total. Most time: {top} ({by_subject[top]} min)."
     if top != least:
         tip += f" Try giving {least} a bit more time ({by_subject[least]} min so far)."
     return tip
 
 
-async def generate_tip(sessions: list[dict]) -> str:
+async def generate_tip(sessions: list[dict], lang: str = "en") -> str:
     if not sessions:
-        return basic_tip(sessions)
+        return basic_tip(sessions, lang)
     if client is None:
-        return basic_tip(sessions)
+        return basic_tip(sessions, lang)
+
+    language_line = (
+        "Reply in Khmer (ភាសាខ្មែរ), using Khmer script."
+        if lang == "km"
+        else "Reply in English."
+    )
 
     summary = "\n".join(f"- {s['subject']}: {s['minutes']} min" for s in sessions)
     prompt = (
         "You are a friendly study coach. Based on these study sessions, "
         "give one short, practical tip (max 3 sentences). "
-        "These sessions are from the last 7 days.\n\n" + summary
+        "These sessions are from the last 7 days. "
+        + language_line
+        + "\n\n"
+        + summary
     )
 
     for model in MODELS:
@@ -55,4 +72,4 @@ async def generate_tip(sessions: list[dict]) -> str:
         except Exception as e:
             print(f"Gemini error ({model}):", repr(e))
 
-    return basic_tip(sessions)
+    return basic_tip(sessions, lang)
