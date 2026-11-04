@@ -1,18 +1,22 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import sessions
-from app.routes import sessions, ai
+
+from app.config import settings
+from app.routes import ai, auth, sessions
+
 app = FastAPI(title="StudyPulse API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173", settings.frontend_url],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(sessions.router)
 app.include_router(ai.router)
+
 
 @app.get("/")
 def health():
