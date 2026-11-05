@@ -19,3 +19,5 @@ export const createSession = (data) => api.post("/sessions/", data);
 export const updateSession = (id, data) => api.put(`/sessions/${id}`, data);
 export const deleteSession = (id) => api.delete(`/sessions/${id}`);
 export const getTip = (lang = "en") => api.get("/ai/tip", { params: { lang } });
+
+export const getQuiz = (params) => api.get("/quiz/", { params, timeout: 60000 });

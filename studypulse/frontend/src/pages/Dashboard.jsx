@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   createSession,
@@ -115,6 +116,7 @@ export default function Dashboard() {
         <div className="brand">📚 StudyPulse</div>
         <div className="topbar-right">
           <span className="hello">Hi, {user.name} 👋</span>
+          <Link className="btn" to="/quiz">🧠 Quiz</Link>
           <button className="btn btn-ghost" onClick={logout}>Log out</button>
         </div>
       </header>

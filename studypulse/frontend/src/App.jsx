@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
+import Quiz from "./pages/Quiz";
 
 function Protected({ children }) {
   const { user, loading } = useAuth();
@@ -19,6 +20,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Protected><Dashboard /></Protected>} />
+      <Route path="/quiz" element={<Protected><Quiz /></Protected>} />
       <Route path="/login" element={<GuestOnly><AuthPage mode="login" /></GuestOnly>} />
       <Route path="/register" element={<GuestOnly><AuthPage mode="register" /></GuestOnly>} />
       <Route path="*" element={<Navigate to="/" replace />} />
