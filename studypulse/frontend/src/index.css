@@ -1,15 +1,13 @@
 :root {
-  --bg: #f2f2f7;
-  --card: #ffffff;
-  --fill: #f2f2f7;
-  --text: #1c1c1e;
-  --muted: #8e8e93;
-  --hairline: rgba(60, 60, 67, 0.12);
-  --blue: #007aff;
-  --blue-soft: rgba(0, 122, 255, 0.1);
+  --text: #10223f;
+  --muted: #4c6385;
+  --blue: #0a84ff;
+  --blue-soft: rgba(10, 132, 255, 0.14);
   --red: #ff3b30;
-  --red-soft: rgba(255, 59, 48, 0.1);
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.05);
+  --red-soft: rgba(255, 59, 48, 0.14);
+  --glass: linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.28));
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-shadow: 0 8px 32px rgba(31, 80, 160, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.85);
   color-scheme: light;
 }
 
@@ -19,13 +17,26 @@ body {
   margin: 0;
   min-height: 100vh;
   color: var(--text);
-  background: var(--bg);
+  background: linear-gradient(160deg, #d6ecff 0%, #a9d3ff 45%, #86bfff 100%);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
     "Khmer UI", "Leelawadee UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-#root { text-align: left; }
+/* Soft glowing blobs behind the glass */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(600px 420px at 12% 8%, rgba(255, 255, 255, 0.95), transparent 60%),
+    radial-gradient(520px 520px at 88% 18%, rgba(0, 24, 36, 0.75), transparent 60%),
+    radial-gradient(640px 520px at 72% 92%, rgba(0, 25, 50, 0.5), transparent 60%),
+    radial-gradient(520px 420px at 8% 88%, rgba(43, 5, 108, 0.4), transparent 60%);
+}
+
+#root { text-align: left; position: relative; }
 
 h1, h2 { margin: 0 0 12px; letter-spacing: -0.02em; }
 h2 { font-size: 1.1rem; font-weight: 600; }
@@ -33,85 +44,97 @@ h2 { font-size: 1.1rem; font-weight: 600; }
 .cap { text-transform: capitalize; }
 .center-note { text-align: center; margin-top: 80px; color: var(--muted); }
 
-/* Cards */
+/* Glass cards */
 .card {
-  background: var(--card);
-  border-radius: 22px;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
   padding: 20px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--glass-shadow);
 }
 
 /* Inputs */
 input, select {
-  background: var(--fill);
+  background: rgba(255, 255, 255, 0.5);
   color: var(--text);
-  border: 1px solid transparent;
-  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 14px;
   padding: 11px 14px;
   font: inherit;
   min-width: 0;
+  box-shadow: inset 0 1px 2px rgba(31, 80, 160, 0.06);
   transition: box-shadow 0.15s, border-color 0.15s, background 0.15s;
 }
-input::placeholder { color: #a1a1a6; }
+input::placeholder { color: #7b8fae; }
 input:focus, select:focus {
   outline: none;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.8);
   border-color: var(--blue);
   box-shadow: 0 0 0 4px var(--blue-soft);
 }
+select option { color: #1c1c1e; background: #fff; }
 
 /* Buttons */
 .btn {
-  background: var(--blue);
+  background: linear-gradient(180deg, #4fb0ff 0%, var(--blue) 100%);
   color: #fff;
   border: 0;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 11px 18px;
   font: inherit;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.1s, filter 0.15s, background 0.15s;
+  box-shadow: 0 6px 16px rgba(10, 132, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: transform 0.1s, filter 0.15s, box-shadow 0.15s;
 }
 .btn:hover { filter: brightness(1.06); }
 .btn:active { transform: scale(0.97); }
 .btn:disabled { opacity: 0.55; cursor: wait; }
-.btn-ghost { background: var(--blue-soft); color: var(--blue); }
-.btn-ghost:hover { filter: none; background: rgba(0, 122, 255, 0.16); }
-.btn-danger { background: var(--red-soft); color: var(--red); }
-.btn-danger:hover { filter: none; background: rgba(255, 59, 48, 0.16); }
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--blue);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: none;
+}
+.btn-ghost:hover { filter: none; background: rgba(255, 255, 255, 0.75); }
+
+.btn-danger {
+  background: var(--red-soft);
+  color: var(--red);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: none;
+}
+.btn-danger:hover { filter: none; background: rgba(255, 59, 48, 0.22); }
 
 .error {
-  background: var(--red-soft);
-  color: #c4261d;
+  background: rgba(255, 59, 48, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: #b3261e;
   padding: 11px 14px;
-  border-radius: 12px;
+  border-radius: 14px;
   font-size: 0.92rem;
 }
 
 /* Login / register */
-.auth-wrap {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 16px;
-  background: linear-gradient(180deg, #f7f8fc 0%, #eceef6 100%);
-}
+.auth-wrap { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
 .auth-card {
   width: 100%;
   max-width: 400px;
   padding: 32px 28px;
-  border-radius: 28px;
+  border-radius: 30px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04), 0 24px 48px rgba(0, 0, 0, 0.08);
 }
 .auth-card .brand { text-align: center; font-size: 1.05rem; }
 .auth-card h1 { margin: 8px 0 0; font-size: 1.8rem; text-align: center; }
 .auth-card p { margin: 0; text-align: center; }
 .auth-card input { padding: 14px 16px; }
-.auth-card .btn { padding: 14px; font-size: 1rem; border-radius: 14px; margin-top: 4px; }
-.switch a { color: var(--blue); text-decoration: none; font-weight: 500; }
+.auth-card .btn { padding: 14px; font-size: 1rem; margin-top: 4px; }
+.switch a { color: var(--blue); text-decoration: none; font-weight: 600; }
 
 /* Dashboard layout */
 .app {
@@ -123,7 +146,7 @@ input:focus, select:focus {
   gap: 16px;
 }
 
-/* Frosted glass top bar */
+/* Floating glass top bar */
 .topbar {
   position: sticky;
   top: 12px;
@@ -134,12 +157,12 @@ input:focus, select:focus {
   gap: 12px;
   flex-wrap: wrap;
   padding: 10px 14px 10px 18px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.7);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  backdrop-filter: saturate(180%) blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: var(--shadow);
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.38));
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
 }
 .brand { font-weight: 700; font-size: 1.15rem; letter-spacing: -0.02em; }
 .topbar-right { display: flex; align-items: center; gap: 12px; }
@@ -166,15 +189,17 @@ input:focus, select:focus {
   width: 100%;
   display: flex;
   align-items: flex-end;
-  background: var(--fill);
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
   overflow: hidden;
 }
 .bar {
   width: 100%;
   min-height: 4px;
   border-radius: 10px;
-  background: linear-gradient(180deg, #5ac8fa, var(--blue));
+  background: linear-gradient(180deg, #7fe0ff, var(--blue));
+  box-shadow: 0 0 14px rgba(10, 132, 255, 0.45);
   transition: height 0.4s ease;
 }
 .bar-val { font-size: 0.75rem; color: var(--muted); min-height: 1em; }
@@ -188,12 +213,13 @@ input:focus, select:focus {
 .tip {
   margin: 14px 0 0;
   line-height: 1.6;
-  background: var(--blue-soft);
-  border-radius: 14px;
+  background: rgba(10, 132, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
   padding: 14px 16px;
 }
 
-/* Session list (iOS grouped list style) */
+/* Session list */
 .list { list-style: none; margin: 0; padding: 0; }
 .item {
   display: flex;
@@ -201,10 +227,10 @@ input:focus, select:focus {
   gap: 8px;
   flex-wrap: wrap;
   padding: 12px 2px;
-  border-bottom: 1px solid var(--hairline);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.7);
 }
 .item:last-child { border-bottom: 0; }
-.item .btn { padding: 7px 12px; font-size: 0.88rem; border-radius: 10px; }
+.item .btn { padding: 7px 12px; font-size: 0.88rem; border-radius: 11px; }
 
 @media (max-width: 720px) {
   .grid-stats { grid-template-columns: repeat(2, 1fr); }
